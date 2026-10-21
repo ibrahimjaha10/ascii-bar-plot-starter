@@ -1,7 +1,6 @@
-from rich.console import Console
-from rich.text import Text
+from rich import print
 
-COLORS = ["green", "cyan", "yellow", "magenta", "red", "blue"]
+COLORS = ["green", "cyan", "yellow", "magenta"]
 
 
 def scale_bar(value, maximum, width=40):
@@ -10,19 +9,15 @@ def scale_bar(value, maximum, width=40):
     return round(value / maximum * width)
 
 
-def render_bar_chart(values, width=40, title="Average value1 by type"):
-    console = Console()
-    console.print(f"\n{title}\n")
-    if not values:
-        return
-    maximum = max(value for _, value in values)
+def render_bar_chart(values, width=40):
+    print("Average value1 by type\n")
+
+    maximum = 0
+    for label, value in values:
+        if value > maximum:
+            maximum = value
+
     for i, (label, value) in enumerate(values):
         bar = "█" * scale_bar(value, maximum, width)
-        line = Text(f"{label} | ")
-        line.append(bar.ljust(width), style=COLORS[i % len(COLORS)])
-        line.append(f" {value:.2f}")
-        console.print(line)
-
-
-if __name__ == "__main__":
-    render_bar_chart([("A", 2.16), ("B", 4.33), ("C", 6.57), ("D", 8.71)])
+        color = COLORS[i % len(COLORS)]
+        print(f"{label} | [{color}]{bar:<{width}}[/] {value:.2f}")
